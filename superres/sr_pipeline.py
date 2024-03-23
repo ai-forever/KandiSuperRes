@@ -49,8 +49,8 @@ class SuperResPipeline:
                                                    view_batch_size=15, eta=0.0, seed=0)
 
         sr_image = torch.clip((sr_image + 1.) / 2., 0., 1.)
-        if old_height*4 != height or old_width*4 != width:
-            sr_image = F.interpolate(sr_image, [old_height*4, old_width*4], mode='bilinear', align_corners=True)
+        if old_height*self.scale != height or old_width*self.scale != width:
+            sr_image = F.interpolate(sr_image, [old_height*self.scale, old_width*self.scale], mode='bilinear', align_corners=True)
             
         pil_sr_image = self.to_pil(sr_image[0])
         return pil_sr_image

@@ -63,8 +63,6 @@ class DPMSolver:
     def get_views(self, panorama_height, panorama_width, window_size=1024, stride=800):
         # Here, we define the mappings F_i (see Eq. 7 in the MultiDiffusion paper https://arxiv.org/abs/2302.08113)
         # if panorama's height/width < window_size, num_blocks of height/width should return 1
-#         panorama_height /= 8
-#         panorama_width /= 8
         num_blocks_height = round(math.ceil((panorama_height - window_size) / stride)) + 1 if panorama_height > window_size else 1
         num_blocks_width = round(math.ceil((panorama_width - window_size) / stride)) + 1 if panorama_width > window_size else 1
         total_num_blocks = int(num_blocks_height * num_blocks_width)
@@ -81,7 +79,6 @@ class DPMSolver:
                 w_end = panorama_width
                 w_start = panorama_width - window_size
             views.append((h_start, h_end, w_start, w_end))
-        print(len(views))
         return views
     
     
