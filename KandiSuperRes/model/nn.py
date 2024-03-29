@@ -1,9 +1,7 @@
 import math
-
 import torch
 from torch import nn, einsum
 from einops import rearrange, repeat
-
 from .utils import exist, set_default_layer
 
 
@@ -30,27 +28,6 @@ class SinusoidalPosEmb(nn.Module):
         return torch.cat((emb.sin(), emb.cos()), dim=-1)
 
 
-class ParallelLayerNorm(nn.Module):
-
-    def __init__(self, normalized_shape, num_layers=1, eps=1e-05, elementwise_affine=True):
-        super().__init__()
-        self.layer_norms = nn.ModuleList([
-            nn.LayerNorm(normalized_shape, eps=eps, elementwise_affine=elementwise_affine) for _ in range(num_layers)
-        ])
-
-    def forward(self, x, layer_idx=None):
-        if exist(layer_idx):
-            batch_idx = torch.argsort(
-                torch.sort(layer_idx, stable=True).indices
-            )
-            x = torch.cat([
-                layer_norm(x[layer_idx == i]) for i, layer_norm in enumerate(self.layer_norms)
-            ])[batch_idx]
-        else:
-            x = self.layer_norms[0](x)
-        return x
-
-
 class UpDownResolution(nn.Module):
 
     def __init__(self, num_channels, up_resolution, change_type='conv'):
@@ -73,27 +50,6 @@ class UpDownResolution(nn.Module):
 
     def forward(self, x):
         x = self.change_resolution(x)
-        return x
-    
-    
-class ParallelLinear(nn.Module):
-
-    def __init__(self, in_features, out_features, num_layers=1, bias=True):
-        super().__init__()
-        self.linears = nn.ModuleList([
-            nn.Linear(in_features, out_features, bias=bias) for _ in range(num_layers)
-        ])
-
-    def forward(self, x, layer_idx=None):
-        if exist(layer_idx):
-            batch_idx = torch.argsort(
-                torch.sort(layer_idx, stable=True).indices
-            )
-            x = torch.cat([
-                linear(x[layer_idx == i]) for i, linear in enumerate(self.linears)
-            ])[batch_idx]
-        else:
-            x = self.linears[0](x)
         return x
 
 

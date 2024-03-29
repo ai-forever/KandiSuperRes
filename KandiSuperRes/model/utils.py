@@ -17,10 +17,3 @@ def set_default_layer(condition, layer_1, args_1=[], kwargs_1={}, layer_2=Identi
         return layer_1(*args_1, **kwargs_1)
     else:
         return layer_2(*args_2, **kwargs_2)
-
-
-def get_tensor_items(x, pos, broadcast_shape):
-    bs = pos.shape[0]
-    ndims = len(broadcast_shape[1:])
-    x = x.to(pos.device)[pos]
-    return x.reshape(bs, *((1,) * ndims))

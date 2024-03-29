@@ -1,15 +1,14 @@
 import torch
-from torch import nn, einsum
+from torch import nn
 from einops import rearrange
-
-from .nn import Identity, ParallelLayerNorm, ParallelLinear, Attention, SinusoidalPosEmb, UpDownResolution
+from .nn import Identity, Attention, SinusoidalPosEmb, UpDownResolution
 from .utils import exist, set_default_item, set_default_layer
 import torch.nn.functional as F
 
 
 class Block(nn.Module):
 
-    def __init__(self, in_channels, out_channels, time_embed_dim=None, groups=8, activation=None, up_resolution=None, dropout=None):
+    def __init__(self, in_channels, out_channels, time_embed_dim=None, groups=32, activation=None, up_resolution=None, dropout=None):
         super().__init__()
         self.group_norm = nn.GroupNorm(groups, in_channels)
         self.activation = set_default_layer(
@@ -40,7 +39,7 @@ class Block(nn.Module):
 
 class ResNetBlock(nn.Module):
 
-    def __init__(self, in_channels, out_channels, time_embed_dim=None, groups=8, up_resolution=None):
+    def __init__(self, in_channels, out_channels, time_embed_dim=None, groups=32, up_resolution=None):
         super().__init__()
         self.time_mlp = set_default_item(
             exist(time_embed_dim),
@@ -77,7 +76,7 @@ class ResNetBlock(nn.Module):
 class AttentionBlock(nn.Module):
 
     def __init__(
-            self, dim, context_dim=None, groups=8, num_heads=8, num_conditions=1, feed_forward_mult=2
+            self, dim, context_dim=None, groups=32, num_heads=8, num_conditions=1, feed_forward_mult=2
     ):
         super().__init__()
         self.in_norm = nn.GroupNorm(groups, dim)
@@ -108,12 +107,11 @@ class AttentionBlock(nn.Module):
         return x
 
     
-## efficient
 class DownSampleBlock(nn.Module):
 
     def __init__(
             self, in_channels, out_channels, time_embed_dim,
-            num_resnet_blocks=3, groups=8, down_sample=True, context_dim=None, self_attention=True, num_conditions=1):
+            num_resnet_blocks=3, groups=32, down_sample=True, context_dim=None, self_attention=True, num_conditions=1):
         super().__init__()
         up_resolutions = [set_default_item(down_sample, False)] + [None] * (num_resnet_blocks - 1)
         hidden_channels = [(in_channels, out_channels)] + [(out_channels, out_channels)] * (num_resnet_blocks - 1)
@@ -142,12 +140,11 @@ class DownSampleBlock(nn.Module):
         return x
 
 
-## efficient
 class UpSampleBlock(nn.Module):
 
     def __init__(
             self, in_channels, cat_dim, out_channels, time_embed_dim,
-            num_resnet_blocks=3, groups=8, up_sample=True, context_dim=None, self_attention=True, num_conditions=1):
+            num_resnet_blocks=3, groups=32, up_sample=True, context_dim=None, self_attention=True, num_conditions=1):
         super().__init__()
         up_resolutions = [None] * (num_resnet_blocks - 1) + [set_default_item(up_sample, True)]
         hidden_channels = [(in_channels + cat_dim, in_channels)] + [(in_channels, in_channels)] * (num_resnet_blocks - 2) + [(in_channels, out_channels)]
@@ -180,24 +177,26 @@ class UNet(nn.Module):
 
     def __init__(self,
                  model_channels,
-                 init_channels=None,
+                 init_channels=128,
                  num_channels=3,
-                 time_embed_dim=None,
+                 time_embed_dim=512,
                  context_dim=None,
-                 groups=8,
-                 feature_pooling_type=None,
+                 groups=32,
+                 feature_pooling_type='attention',
                  dim_mult=(1, 2, 4, 8),
-                 num_resnet_blocks=(3, 3, 3, 3),
+                 num_resnet_blocks=(2, 4, 8, 8),
                  num_conditions=1,
-                 add_cross_attention=(False, True, True, True),
-                 add_self_attention=(False, True, True, True),
-                 lowres_cond=False,
-                 efficient=False):
+                 skip_connect_scale=1.,
+                 add_cross_attention=(False, False, False, False),
+                 add_self_attention=(False, False, False, False),
+                 lowres_cond=True,
+                ):
         super().__init__()
         out_channels = num_channels
         num_channels = set_default_item(lowres_cond, num_channels * 2, num_channels)
         init_channels = init_channels or model_channels
         self.num_conditions = num_conditions
+        self.skip_connect_scale = skip_connect_scale
         self.to_time_embed = nn.Sequential(
             SinusoidalPosEmb(init_channels),
             nn.Linear(init_channels, time_embed_dim),
@@ -207,7 +206,6 @@ class UNet(nn.Module):
 
         self.init_conv = nn.Conv2d(num_channels, init_channels, kernel_size=3, padding=1)
 
-        self.skip_connect_scale = set_default_item(efficient, 2 ** 0.5, 1.)
         hidden_dims = [init_channels, *map(lambda mult: model_channels * mult, dim_mult)]
         in_out_dims = list(zip(hidden_dims[:-1], hidden_dims[1:]))
         text_dims = [set_default_item(is_exist, context_dim) for is_exist in add_cross_attention]

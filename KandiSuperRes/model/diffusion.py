@@ -1,4 +1,4 @@
-from diffusers import DDIMScheduler, DPMSolverMultistepScheduler, UniPCMultistepScheduler
+from diffusers import DDIMScheduler, DPMSolverMultistepScheduler
 from einops import repeat
 import copy
 import inspect
@@ -24,22 +24,6 @@ class DPMSolver:
         pred_noise = model(x.to(dtype), t.to(dtype), lowres_img=lowres_img.to(dtype))
         pred_noise = pred_noise.to(dtype=torch.float32)
         return pred_noise
-    
-#     @torch.no_grad()
-#     def p_sample_loop(
-#         self, model, shape, device, seed=None, **model_kwargs
-#     ):
-#         generator = torch.Generator(device=device)
-#         if seed is not None:
-#             generator = generator.manual_seed(seed)
-#         img = torch.randn(*shape, device=device, generator=generator)
-#         for time in tqdm(self.dpm_solver.timesteps):
-#             t = repeat(time.unsqueeze(0), '1 -> b', b=shape[0]).to(device=device)
-#             pred_noise = self.pred_noise(
-#                 model, img, t, **model_kwargs,
-#             )
-#             img = self.dpm_solver.step(pred_noise, time, img, generator=generator).prev_sample
-#         return img
     
     
     def prepare_extra_step_kwargs(self, generator, eta):
@@ -145,7 +129,6 @@ class DPMSolver:
                 )
                 img_denoised_batch = self.dpm_solver.step(pred_noise, time, img_for_view, **extra_step_kwargs).prev_sample
                 
-
                 # save views scheduler status after sample
                 views_scheduler_status[j] = copy.deepcopy(self.dpm_solver.__dict__)
 
