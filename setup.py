@@ -29,8 +29,8 @@ setup(
     name='KandiSuperRes',
     author='SberAI',
     packages=['KandiSuperRes', 'KandiSuperRes/model'],
-    install_requires=get_requirements(),
     dependency_links=[
         "https://download.pytorch.org/whl/torch_stable.html",
-    ]
+    ],
+    install_requires=get_requirements()
 )

@@ -26,12 +26,7 @@ def get_sr_model(
     )
 
     if weights_path:
-        state_dict = torch.load(weights_path, map_location=torch.device('cpu'))
-        unet_state_dict = {
-            key.replace('unet.', ''): value
-            for key, value in state_dict['callbacks']['EMA']['ema_state_dict'].items()  if 'unet' in key
-        }
-
+        unet_state_dict = torch.load(weights_path, map_location=torch.device('cpu'))
         unet.load_state_dict(unet_state_dict)
 
     unet.to(device=device, dtype=dtype).eval()
@@ -42,8 +37,12 @@ def get_SR_pipeline(
     device: Union[str, torch.device],
     fp16: bool = True,
     model_path: str = None,
+    cache_dir: str = '/tmp/KandiSuperRes/',
 ) -> KandiSuperResPipeline:
-    
+    if model_path is None:
+        model_path = hf_hub_download(
+            repo_id="ai-forever/KandiSuperRes", filename='weights/KandiSuperRes.ckpt', cache_dir=cache_dir
+        )
     dtype = torch.float16 if fp16 else torch.float32
     sr_model = get_sr_model(device, model_path, dtype=dtype)
     return KandiSuperResPipeline(device, dtype, sr_model)
