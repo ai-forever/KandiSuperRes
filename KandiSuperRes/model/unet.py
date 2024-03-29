@@ -258,8 +258,3 @@ class UNet(nn.Module):
         x = self.activation(x)
         x = self.out_conv(x)
         return x
-
-
-def get_unet(conf):
-    unet = UNet(**conf)
-    return unet

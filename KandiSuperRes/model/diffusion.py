@@ -19,6 +19,7 @@ class DPMSolver:
         )
         self.dpm_solver.set_timesteps(num_timesteps)
         
+        
     @torch.no_grad()    
     def pred_noise(self, model, x, t, lowres_img, dtype):
         pred_noise = model(x.to(dtype), t.to(dtype), lowres_img=lowres_img.to(dtype))

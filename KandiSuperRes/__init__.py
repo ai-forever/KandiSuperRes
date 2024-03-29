@@ -1,7 +1,5 @@
-import os
-from typing import Optional, Union
-
 import torch
+from typing import Optional, Union
 from huggingface_hub import hf_hub_download
 
 from .sr_pipeline import KandiSuperResPipeline
