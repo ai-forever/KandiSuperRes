@@ -24,8 +24,7 @@ def get_sr_model(
         add_cross_attention=(False, False, False, False),
         add_self_attention=(False, False, False, False),
         feature_pooling_type='attention',
-        lowres_cond =True,
-        efficient=False
+        lowres_cond =True
     )
 
     if weights_path:
