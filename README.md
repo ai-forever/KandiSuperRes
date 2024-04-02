@@ -4,6 +4,10 @@
 
 ![](assets/title.png)
 
+## Description:
+
+KandiSuperRes is an open-source diffusion model for x4 super resolution. This model is based on the Kandinsky 3.0 architecture with some modifications. For generation in 4K, the MultiDiffusion algorithm was used, which allows to generate panoramic images. For more information: details of architecture and training, example of generations check out our [Habr post]().
+
 ## Installing
 
 To install repo first one need to create conda environment:
@@ -26,3 +30,9 @@ sr_pipe = get_SR_pipeline(device='cuda', fp16=True)
 lr_image = ... # PIL Image
 sr_image = sr_pipe(lr_image)
 ```
+
+## Authors
++ Anastasia Maltseva [Github](https://github.com/NastyaMittseva)
++ Vladimir Arkhipkin: [Github](https://github.com/oriBetelgeuse)
++ Andrey Kuznetsov: [Github](https://github.com/kuznetsoffandrey), [Blog](https://t.me/complete_ai)
++ Denis Dimitrov: [Github](https://github.com/denndimitrov), [Blog](https://t.me/dendi_math_ai)
