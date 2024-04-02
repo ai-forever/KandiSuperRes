@@ -41,7 +41,7 @@ def get_SR_pipeline(
 ) -> KandiSuperResPipeline:
     if model_path is None:
         model_path = hf_hub_download(
-            repo_id="ai-forever/KandiSuperRes", filename='weights/KandiSuperRes.ckpt', cache_dir=cache_dir
+            repo_id="ai-forever/KandiSuperRes", filename='KandiSuperRes.ckpt', cache_dir=cache_dir
         )
     dtype = torch.float16 if fp16 else torch.float32
     sr_model = get_sr_model(device, model_path, dtype=dtype)
