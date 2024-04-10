@@ -31,7 +31,9 @@ class KandiSuperResPipeline:
     def __call__(
         self, 
         pil_image: PIL.Image.Image = None,
-        steps: int = 5
+        steps: int = 5,
+        view_batch_size: int = 15,
+        seed: int = 0
     ) -> PIL.Image.Image:
         
         base_diffusion = DPMSolver(steps)
@@ -46,7 +48,7 @@ class KandiSuperResPipeline:
 
         sr_image = base_diffusion.generate_panorama(height, width, self.device, self.dtype, steps, 
                                                    self.unet, lowres_img=lr_image, 
-                                                   view_batch_size=15, eta=0.0, seed=0)
+                                                   view_batch_size=view_batch_size, eta=0.0, seed=seed)
 
         sr_image = torch.clip((sr_image + 1.) / 2., 0., 1.)
         if old_height*self.scale != height or old_width*self.scale != width:
