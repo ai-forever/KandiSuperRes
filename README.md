@@ -13,7 +13,7 @@ KandiSuperRes is an open-source diffusion model for x4 super resolution. This mo
 To install repo first one need to create conda environment:
 
 ```
-conda create -n kandisuperres -y python=3.8;
+conda create -n kandisuperres -y python=3.12;
 source activate kandisuperres;
 pip install -r requirements.txt;
 ```
@@ -26,7 +26,7 @@ Check our jupyter notebook `KandiSuperRes.ipynb` with example.
 from KandiSuperRes import get_SR_pipeline
 from PIL import Image
 
-sr_pipe = get_SR_pipeline(device='cuda', fp16=True)
+sr_pipe = get_SR_pipeline(device='cuda', fp16=True, scale=2)
 
 lr_image = Image.open('')
 sr_image = sr_pipe(lr_image)
