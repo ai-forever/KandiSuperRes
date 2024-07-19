@@ -102,49 +102,56 @@ def get_movq(
 def get_SR_pipeline(
     device: Union[str, torch.device],
     fp16: bool = True,
+    flash: bool = True,
+    scale: int = 2,
     cache_dir: str = '/tmp/KandiSuperRes/',
     movq_path: str = None,
     refiner_path: str = None,
     unet_sr_path: str = None,
-    scale: int = 2,
 ) -> KandiSuperResPipeline:
     
-    if scale == 2:
-        device_map = {
+    if flash:
+        if scale == 2:
+            device_map = {
             'movq': device, 'refiner': device, 'sr_model': device
-        } 
-        dtype = torch.float16 if fp16 else torch.float32 
-        dtype_map = {
-            'movq': torch.float32, 'refiner': dtype, 'sr_model': dtype
-        }
-
-        if movq_path is None:
-            print('Download movq weights')
-            movq_path = hf_hub_download(
-                repo_id="ai-forever/Kandinsky3.1", filename='weights/movq.pt', cache_dir=cache_dir
-            )
-        if refiner_path is None:
-            print('Download refiner weights')
-            refiner_path = hf_hub_download(
-                repo_id="ai-forever/Kandinsky3.1", filename='weights/kandinsky3_flash.pt', cache_dir=cache_dir
-            )
+            } 
+            dtype = torch.float16 if fp16 else torch.float32 
+            dtype_map = {
+                'movq': torch.float32, 'refiner': dtype, 'sr_model': dtype
+            }
+            if movq_path is None:
+                print('Download movq weights')
+                movq_path = hf_hub_download(
+                    repo_id="ai-forever/Kandinsky3.1", filename='weights/movq.pt', cache_dir=cache_dir
+                )
+            if refiner_path is None:
+                print('Download refiner weights')
+                refiner_path = hf_hub_download(
+                    repo_id="ai-forever/Kandinsky3.1", filename='weights/kandinsky3_flash.pt', cache_dir=cache_dir
+                )
+            if unet_sr_path is None:
+                print('Download KandiSuperRes Flash weights')
+                unet_sr_path = hf_hub_download(
+                    repo_id="ai-forever/KandiSuperRes", filename='KandiSuperRes_flash_x2.pt', cache_dir=cache_dir
+                )
+            sr_model = get_sr_model(device_map['sr_model'], unet_sr_path, dtype=dtype_map['sr_model'])
+            movq = get_movq(device_map['movq'], movq_path, dtype=dtype_map['movq'])
+            refiner, _ = get_T2I_unet(device_map['refiner'], refiner_path, dtype=dtype_map['refiner'])
+            return KandiSuperResPipeline(
+                scale, device_map, dtype_map, flash, sr_model, movq, refiner
+            )        
+        else:
+            print('Flash model for x4 scale is not implemented.')
+    else:
         if unet_sr_path is None:
-            print('Download KandiSuperRes Flash weights')
-            unet_sr_path = hf_hub_download(
-                repo_id="ai-forever/KandiSuperRes", filename='KandiSuperRes_flash_x2.pt', cache_dir=cache_dir
-            )
-        sr_model = get_sr_model(device_map['sr_model'], unet_sr_path, dtype=dtype_map['sr_model'])
-        movq = get_movq(device_map['movq'], movq_path, dtype=dtype_map['movq'])
-        refiner, _ = get_T2I_unet(device_map['refiner'], refiner_path, dtype=dtype_map['refiner'])
-        return KandiSuperResPipeline(
-            scale, device_map, dtype_map, sr_model, movq, refiner
-        )
-        
-    elif scale == 4:
-        if unet_sr_path is None:
-            unet_sr_path = hf_hub_download(
-                repo_id="ai-forever/KandiSuperRes", filename='KandiSuperRes.ckpt', cache_dir=cache_dir
-            )
+            if scale == 4:
+                unet_sr_path = hf_hub_download(
+                    repo_id="ai-forever/KandiSuperRes", filename='KandiSuperRes.ckpt', cache_dir=cache_dir
+                )
+            elif scale == 2:
+                unet_sr_path = hf_hub_download(
+                    repo_id="ai-forever/KandiSuperRes", filename='KandiSuperRes_x2.ckpt', cache_dir=cache_dir
+                )
         dtype = torch.float16 if fp16 else torch.float32
         sr_model = get_sr_model(device, unet_sr_path, dtype=dtype)
-        return KandiSuperResPipeline(scale, device, dtype, sr_model)
+        return KandiSuperResPipeline(scale, device, dtype, flash, sr_model)

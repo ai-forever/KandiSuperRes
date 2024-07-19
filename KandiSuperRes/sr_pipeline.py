@@ -18,6 +18,7 @@ class KandiSuperResPipeline:
         scale: int,
         device: str,
         dtype: str,
+        flash: bool,
         sr_model: UNet_sr,
         movq: MoVQ = None,
         refiner: UNet = None,
@@ -25,7 +26,7 @@ class KandiSuperResPipeline:
         self.device = device
         self.dtype = dtype
         self.scale = scale
-        
+        self.flash = flash
         self.to_pil = T.ToPILImage()
         self.image_transform = T.Compose([
             T.Lambda(lambda img: img.convert('RGB') if img.mode != 'RGB' else img),
@@ -46,7 +47,7 @@ class KandiSuperResPipeline:
         refine=True
     ) -> PIL.Image.Image:
 
-        if self.scale == 2:
+        if self.flash:
             betas_turbo = get_named_beta_schedule('linear', 1000)
             base_diffusion_sr = BaseDiffusion_turbo(betas_turbo)
     
@@ -92,7 +93,7 @@ class KandiSuperResPipeline:
             pil_sr_image = self.to_pil(sr_image[0])
             return pil_sr_image
 
-        elif self.scale == 4:
+        else:
             base_diffusion = DPMSolver(steps)
             
             lr_image = self.image_transform(pil_image).unsqueeze(0).to(self.device)
