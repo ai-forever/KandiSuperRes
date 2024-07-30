@@ -1,12 +1,21 @@
 # KandiSuperRes - diffusion model for 4K super resolution
 
-[Habr Post](https://habr.com/ru/companies/sberbank/articles/775590/) | [![Hugging Face Spaces](https://img.shields.io/badge/🤗-Huggingface-yello.svg)](https://huggingface.co/ai-forever/KandiSuperRes/) | [Telegram-bot](https://t.me/kandinsky21_bot) | [Technical Report](https://arxiv.org/pdf/2312.03511.pdf)| [Our text-to-image model](https://github.com/ai-forever/Kandinsky-3/tree/main)
+[KandiSuperRes Post](https://habr.com/ru/companies/sberbank/articles/805337/) | [Kandinsky 3.1 Post](https://habr.com/ru/companies/sberbank/articles/805337/) | [![Hugging Face Spaces](https://img.shields.io/badge/🤗-Huggingface-yello.svg)](https://huggingface.co/ai-forever/KandiSuperRes/) | [Telegram-bot](https://t.me/kandinsky21_bot) | [Our text-to-image model](https://github.com/ai-forever/Kandinsky-3/tree/main)
+
+![](assets/title_flash.png)
+
+# KandiSuperRes Flash
+
+## Description
+
+
+# KandiSuperRes
 
 ![](assets/title.png)
 
 ## Description
 
-KandiSuperRes is an open-source diffusion model for x4 super resolution. This model is based on the [Kandinsky 3.0](https://github.com/ai-forever/Kandinsky-3/tree/main) architecture with some modifications. For generation in 4K, the [MultiDiffusion](https://arxiv.org/pdf/2302.08113.pdf) algorithm was used, which allows to generate panoramic images. For more information: details of architecture and training, example of generations check out our [Habr post]().
+KandiSuperRes is an open-source diffusion model for x4 super resolution. This model is based on the [Kandinsky 3.0](https://github.com/ai-forever/Kandinsky-3/tree/main) architecture with some modifications. For generation in 4K, the [MultiDiffusion](https://arxiv.org/pdf/2302.08113.pdf) algorithm was used, which allows to generate panoramic images. For more information: details of architecture and training, example of generations check out our [Habr post](https://habr.com/ru/companies/sberbank/articles/805337/).
 
 ## Installing
 
