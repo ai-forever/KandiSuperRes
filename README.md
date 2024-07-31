@@ -28,7 +28,7 @@ Check our jupyter notebook `KandiSuperRes.ipynb` with example.
 from KandiSuperRes import get_SR_pipeline
 from PIL import Image
 
-sr_pipe = get_SR_pipeline(device='cuda', fp16=True, scale=2)
+sr_pipe = get_SR_pipeline(device='cuda', fp16=True, flash=True, scale=2)
 
 lr_image = Image.open('')
 sr_image = sr_pipe(lr_image)
@@ -67,7 +67,7 @@ Check our jupyter notebook `KandiSuperRes.ipynb` with example.
 from KandiSuperRes import get_SR_pipeline
 from PIL import Image
 
-sr_pipe = get_SR_pipeline(device='cuda', fp16=True, scale=4)
+sr_pipe = get_SR_pipeline(device='cuda', fp16=True, flash=False, scale=4)
 
 lr_image = Image.open('')
 sr_image = sr_pipe(lr_image)
