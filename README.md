@@ -4,7 +4,7 @@
 
 ## KandiSuperRes Flash
 
-![](assets/title_flash.png)
+![](assets/title_flash.gif)
 
 ### Description
 
