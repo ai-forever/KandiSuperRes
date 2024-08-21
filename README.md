@@ -1,6 +1,6 @@
 # KandiSuperRes - diffusion model for super resolution
 
-[KandiSuperRes Flash Post](https://habr.com/ru/companies/sberbank/articles/805337/) | [KandiSuperRes Post](https://habr.com/ru/companies/sberbank/articles/805337/) | [![Hugging Face Spaces](https://img.shields.io/badge/🤗-Huggingface-yello.svg)](https://huggingface.co/ai-forever/KandiSuperRes/) | [Telegram-bot](https://t.me/kandinsky21_bot) | [Our text-to-image model](https://github.com/ai-forever/Kandinsky-3/tree/main)
+[KandiSuperRes Flash Post](https://habr.com/ru/companies/sberbank/articles/837192/) | [KandiSuperRes Post](https://habr.com/ru/companies/sberbank/articles/805337/) | [![Hugging Face Spaces](https://img.shields.io/badge/🤗-Huggingface-yello.svg)](https://huggingface.co/ai-forever/KandiSuperRes/) | [Telegram-bot](https://t.me/kandinsky21_bot) | [Our text-to-image model](https://github.com/ai-forever/Kandinsky-3/tree/main)
 
 ## KandiSuperRes Flash
 
