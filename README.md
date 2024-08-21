@@ -8,7 +8,7 @@
 
 ### Description
 
-KandiSuperRes Flash is a new version of the diffusion model for super resolution. This model includes a distilled version of the KandiSuperRes model and a distilled model [Kandinsky 3.0 Flash](https://github.com/ai-forever/Kandinsky-3/tree/main). KandiSuperRes Flash not only improves image clarity, but also corrects artifacts, draws details, improves image aesthetics. And one of the most important advantages is the ability to use the model in the "infinite super resolution" mode. For more information: details of architecture and training, example of generations check out our [Habr post](https://habr.com/ru/companies/sberbank/articles/805337/).
+KandiSuperRes Flash is a new version of the diffusion model for super resolution. This model includes a distilled version of the KandiSuperRes model and a distilled model [Kandinsky 3.0 Flash](https://github.com/ai-forever/Kandinsky-3/tree/main). KandiSuperRes Flash not only improves image clarity, but also corrects artifacts, draws details, improves image aesthetics. And one of the most important advantages is the ability to use the model in the "infinite super resolution" mode. For more information: details of architecture and training, example of generations check out our [Habr post](https://habr.com/ru/companies/sberbank/articles/837192/).
 
 ### Installing
 
